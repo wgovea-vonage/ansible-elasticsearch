@@ -1,0 +1,12 @@
+---
+- hosts: elasticsearch_servers
+  roles:
+    - elasticsearch_servers
+
+- hosts: kibana_servers
+  roles:
+    - kibana_servers
+
+- hosts: logstash_servers
+  roles:
+    - logstash_servers

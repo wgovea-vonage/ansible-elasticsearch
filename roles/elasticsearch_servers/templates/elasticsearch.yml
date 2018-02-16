@@ -1,0 +1,31 @@
+#-------------------- Network And HTTP --------------------
+network.bind_host: 0.0.0.0
+network.host: {{ host }}
+transport.host: 0.0.0.0
+transport.tcp.port: 9300-9400
+
+#-------------------- Cluster -------------------------------
+cluster.name: {{ elasticsearch.cluster_name }}
+bootstrap.memory_lock: true
+node.name: {{ host_id }}
+node.master: true
+node.data: true
+http.enabled: true
+
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+bootstrap.system_call_filter: false
+
+discovery.type: single-node
+
+path:
+  logs: /var/log/elasticsearch
+  data: {{ elasticsearch.data_path }}
+
+#-------------------- Security -------------------------------
+xpack.security.audit.enabled: false
+xpack.security.enabled: false
+xpack.ssl.verification_mode: none
+
+#-------------------- Scripting ------------------------------
+script.painless.regex.enabled: true

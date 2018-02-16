@@ -1,0 +1,6 @@
+kibana:
+  install_path: /usr/share/kibana
+  config_path: /etc/kibana
+  kibana_default_path:  /etc/default/kibana
+  log_path: /var/log/kibana
+  

@@ -1,0 +1,98 @@
+- name: Runnign ansible for installation of logstash
+  debug: msg="installing Logstash server"
+  tags:
+    -logstash
+
+- name: Copy repo file
+  template: src=elasticsearch_6.repo dest=/etc/yum.repos.d/ owner=root group=root
+  tags:
+    - logstash 
+
+- name: Installing Logstash using YUM
+  yum: name=logstash state=latest update_cache=yes
+  tags:
+    - logstash 
+
+#- name: list contents of directory
+#  command: "{{ logstash.install_path }}/bin/logstash-plugin list"
+#  register: contents
+#  tags:
+#    - logstash
+#
+#- name: check contents for emptiness
+#  command: "{{ logstash.install_path }}/bin/logstash-plugin install x-pack -b"
+#  when: contents.stdout == ""
+#  tags:
+#    - logstash
+
+- name: Add Configuration logstash
+  blockinfile:
+    path: "{{ logstash.config_path }}/logstash.yml"
+    block: |
+      xpack.management.enabled: true
+      xpack.management.elasticsearch.url: {{ logstash.es_nodes }}
+      xpack.management.elasticsearch.username:
+      xpack.management.elasticsearch.password:
+      xpack.management.logstash.poll_interval: 5s
+      xpack.management.pipeline.id: ["main","anotherPipeline"]
+
+      xpack.monitoring.enabled: true
+      xpack.monitoring.elasticsearch.url: {{ logstash.es_nodes }}
+  tags:
+    - logstash
+
+- name: replace user in init script
+  replace:
+    dest: "{{ logstash.init_file_path }}"
+    regexp: 'logstash\:logstash'
+    replace: 'elasticsearch:elasticsearch'
+    backup: yes
+  tags:
+    - logstash
+
+- name: Change owndership of paths
+  file:
+    path: "{{ logstash.config_path }}"
+    owner: elasticsearch
+    group: elasticsearch
+  tags:
+    - logstash
+
+- name: Change owndership of paths
+  file:
+    path: "{{ logstash.install_path }}"
+    owner: elasticsearch
+    group: elasticsearch
+  tags:
+    - logstash
+
+- name: Change owndership of paths
+  file:
+    path: "{{ logstash.log_path }}"
+    owner: elasticsearch
+    group: elasticsearch
+  tags:
+    - logstash
+
+- name: Change owndership of paths
+  file:
+    path: "{{ logstash.lib_path }}"
+    owner: elasticsearch
+    group: elasticsearch
+  tags:
+    - logstash
+
+- name: start logstash
+  service:
+    name: logstash
+    state: started
+  tags:
+    - logstash
+    - logstash_start
+
+- name: stop logstash
+  service:
+    name: logstash
+    state: stopped
+  tags:
+    - logstash_stop

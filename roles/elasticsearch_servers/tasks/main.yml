@@ -1,0 +1,70 @@
+- name: Runnign ansible for installation of elasticsearch
+  debug: msg="installing TAC server"
+  tags:
+    -elasticsearch
+
+- name: Copy repo file
+  template: src=elasticsearch_6.repo dest=/etc/yum.repos.d/ owner=root group=root
+  tags:
+    - elasticsearch 
+
+- name: Installing Elast using YUM
+  yum: name=elasticsearch state=latest update_cache=yes
+  tags:
+    - elasticsearch 
+
+#- name: Copy Config file
+#  template: src=elasticsearch.yml dest={{ elasticsearch.config_path }} owner=elasticsearch group=elasticsearch
+#  tags:
+#    - elasticsearch
+#
+#- name: list contents of directory
+#  command: "{{ elasticsearch.install_path }}/bin/elasticsearch-plugin list"
+#  register: contents
+#  tags:
+#    - elasticsearch
+#
+#- name: check contents for emptiness
+#  command: "{{ elasticsearch.install_path }}/bin/elasticsearch-plugin install x-pack"
+#  when: contents.stdout == ""
+#  tags:
+#    - elasticsearch
+
+- name: Change owndership of paths
+  file:
+    path: "{{ elasticsearch.config_path }}"
+    owner: elasticsearch
+    group: elasticsearch
+  tags:
+    - elasticsearch
+
+- name: Change owndership of paths
+  file:
+    path: "{{ elasticsearch.install_path }}"
+    owner: elasticsearch
+    group: elasticsearch
+  tags:
+    - elasticsearch
+
+- name: Change owndership of paths
+  file:
+    path: "{{ elasticsearch.log_path }}"
+    owner: elasticsearch
+    group: elasticsearch
+  tags:
+    - elasticsearch
+
+- name: start elasticsearch
+  service:
+    name: elasticsearch
+    state: started
+  tags:
+    - elasticsearch
+    - elasticsearch_start
+
+- name: start elasticsearch
+  service:
+    name: elasticsearch
+    state: stopped
+  tags:
+    - elasticsearch_stop

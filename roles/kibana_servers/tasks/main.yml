@@ -1,0 +1,74 @@
+- name: Runnign ansible for installation of kibana
+  debug: msg="installing Kibana server"
+  tags:
+    -kibana
+
+- name: Copy repo file
+  template: src=elasticsearch_6.repo dest=/etc/yum.repos.d/ owner=root group=root
+  tags:
+    - kibana 
+
+- name: Installing Kibana using YUM
+  yum: name=kibana state=latest update_cache=yes
+  tags:
+    - kibana 
+
+- name: replace line
+  lineinfile:
+    dest: "{{ kibana.config_path }}/kibana.yml"
+    regexp: '^\#server.host\: \"localhost\"$'
+    line: 'server.host: 0.0.0.0'
+    backrefs: yes
+  tags:
+    - kibana
+
+- name: list contents of directory
+  command: "{{ kibana.install_path }}/bin/kibana-plugin list"
+  register: contents
+  tags:
+    - kibana
+
+- name: check contents for emptiness
+  command: "{{ kibana.install_path }}/bin/kibana-plugin install x-pack -b"
+  when: contents.stdout == ""
+  tags:
+    - kibana
+
+- name: Change owndership of paths
+  file:
+    path: "{{ kibana.config_path }}"
+    owner: elasticsearch
+    group: elasticsearch
+  tags:
+    - kibana
+
+- name: Change owndership of paths
+  file:
+    path: "{{ kibana.install_path }}"
+    owner: elasticsearch
+    group: elasticsearch
+  tags:
+    - kibana
+
+- name: Change owndership of paths
+  file:
+    path: "{{ kibana.log_path }}"
+    owner: elasticsearch
+    group: elasticsearch
+  tags:
+    - kibana
+
+- name: start kibana
+  service:
+    name: kibana
+    state: started
+  tags:
+    - kibana
+    - kibana_start
+
+- name: start kibana
+  service:
+    name: kibana
+    state: stopped
+  tags:
+    - kibana_stop
