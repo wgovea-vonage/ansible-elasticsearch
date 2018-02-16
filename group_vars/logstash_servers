@@ -3,5 +3,5 @@ logstash:
   config_path: /etc/logstash/
   log_path: /var/log/logstash/
   lib_path: /var/lib/logstash/
-  es_nodes: "[\"hadoop-gateway-04.dev.m.vonagenetworks.net:9200\"]"
+  es_nodes: "[\"<elasticsarch_node:9200\"]"
   init_file_path: /etc/init/logstash.conf
