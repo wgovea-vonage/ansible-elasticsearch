@@ -1,13 +1,13 @@
 [all:vars]
-ansible_ssh_private_key_file=/Users/wgovea/.ssh/marketingwww.pem
+ansible_ssh_private_key_file=<path_to_pem_key>
 
 [elasticsearch_servers]
-hadoop-gateway-04.dev.m.vonagenetworks.net es_node=hadoop-gateway-04
+<host> es_node=<short_host>
 
 [kibana_servers]
-hadoop-gateway-04.dev.m.vonagenetworks.net
+<host>
 
 [logstash_servers]
-hadoop-gateway-02.dev.m.vonagenetworks.net
-hadoop-gateway-03.dev.m.vonagenetworks.net
-hadoop-gateway-04.dev.m.vonagenetworks.net
+<host>
+<host>
+<host>
